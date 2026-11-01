@@ -1,5 +1,8 @@
+from dotenv import find_dotenv, load_dotenv
 from flask import Flask, abort, render_template
 from datetime import datetime
+from azure_web_app import auth, db
+from azure_web_app._constants import SECRET_ENV_FILE
 favs = [
     {"id": 1, "title": "sugar talking - sabrina carpenter", "why": "shes fine asf, and the song makes me fall asleep"},
     {"id": 2, "title": "marvel rivals", "why": "team based game that tortures me"},
@@ -30,7 +33,10 @@ def setup_routes(app):
     app.route("/favoriteplaces/<int:favorite_id>")(favoritePlaces_detail)
 
 def create_app():
+    load_dotenv(find_dotenv(SECRET_ENV_FILE))
     app = Flask(__name__)
+    db.setup_for_app(app)
+    auth.setup_auth(app)
     setup_routes(app)
     return app
 

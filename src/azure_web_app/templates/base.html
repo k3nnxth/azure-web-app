@@ -17,7 +17,10 @@
         <a class="navbar-brand" href="{{ url_for('index') }}">CS 188</a>
         <div class="navbar-nav">
           <a class="nav-link" href="{{ url_for('index') }}">Home</a>
-          <!-- ...the link to your page from Part 1... -->
+          {% if current_user %}
+          <a class="nav-link" href="{{ url_for('account') }}">My account</a>
+          <a class="nav-link" href="{{ url_for('members') }}">Members</a>
+          {% endif %}
         </div>
         {% include "components/account_nav.html" %}
       </div>

@@ -1,8 +1,10 @@
 from dotenv import find_dotenv, load_dotenv
 from flask import Flask, abort, render_template
 from datetime import datetime
-from azure_web_app import auth, db
+from azure_web_app import auth, db, sessions
 from azure_web_app._constants import SECRET_ENV_FILE
+from azure_web_app.sessions import login_required
+
 favs = [
     {"id": 1, "title": "sugar talking - sabrina carpenter", "why": "shes fine asf, and the song makes me fall asleep"},
     {"id": 2, "title": "marvel rivals", "why": "team based game that tortures me"},
@@ -26,16 +28,28 @@ def favoritePlaces_detail(favorite_id: int):
             return render_template("favoriteplaces.html", favorite=favorite)
     abort(404)
 
+@login_required
+def account():
+    return render_template("account.html")
+
+
+@login_required
+def members():
+    return render_template("members.html")
+
 
 def setup_routes(app):
+    app.route("/members")(members)
     app.route("/")(index)
     app.route("/favorites/<int:favorite_id>")(favorite_detail)
     app.route("/favoriteplaces/<int:favorite_id>")(favoritePlaces_detail)
+    app.route("/account")(account)
 
 def create_app():
     load_dotenv(find_dotenv(SECRET_ENV_FILE))
     app = Flask(__name__)
     db.setup_for_app(app)
+    sessions.setup_sessions(app)
     auth.setup_auth(app)
     setup_routes(app)
     return app

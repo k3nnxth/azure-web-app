@@ -159,8 +159,28 @@ async function submitLoginForm(event) {
 
 	alert(reply.result.message);
 	if (reply.response.ok) {
-		hideModal("loginModal");
+		window.location.href = "/account";
 	}
+}
+
+async function logoutEverywhere() {
+	const reply = await postJson("/logout-everywhere", {});
+	if (reply === null || !reply.response.ok) {
+		alert("Could not log out everywhere. Please try again.");
+		return;
+	}
+	window.location.href = "/";
+}
+
+async function logout() {
+	const reply = await postJson("/logout", {});
+	if (reply === null || !reply.response.ok) {
+		alert("Logout failed. Please try again.");
+		return;
+	}
+	// Go back to the home page. This loads a fresh page, so the navbar is
+	// rendered again without the session cookie.
+	window.location.href = "/";
 }
 
 // Remove the green/red validation styling from an input once the user starts
@@ -202,6 +222,8 @@ function attachEventListeners() {
 	for (const modal of document.querySelectorAll(".modal")) {
 		modal.addEventListener("hidden.bs.modal", resetModalForms);
 	}
+	document.getElementById("logoutButton")?.addEventListener("click", logout);
+	document.getElementById("logoutEverywhereButton")?.addEventListener("click", logoutEverywhere);
 }
 
 // Run attachEventListeners once the page's HTML has loaded. If it has already

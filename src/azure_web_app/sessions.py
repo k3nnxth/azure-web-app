@@ -52,7 +52,7 @@ def verify_session_cookie(cookie: str | None) -> str | None:
     session_id, _, signature = cookie.partition(":")
     # compare_digest takes the same amount of time no matter where the first
     # wrong character is. A normal == stops at the first difference, and an
-    # attacker could time that to guess the signature one character at a time.
+    # attacker could time that to guess the signature one character at a time...
     if hmac.compare_digest(signature.encode(), compute_signature(session_id).encode()):
         return session_id
     return None
